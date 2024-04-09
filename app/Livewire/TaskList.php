@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Task;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Auth;
 
 class TaskList extends Component
 {
@@ -18,12 +19,12 @@ class TaskList extends Component
     #[On('task-created')]
     public function loadTasks()
     {
-        $this->tasks = Task::orderBy('id', 'DESC')->get();
+        $user = Auth::user();
+        $this->tasks = Task::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
     }
 
     public function isCompleted($taskId)
     {
-
         $task = Task::find($taskId);
 
         if ($task) {
@@ -32,7 +33,6 @@ class TaskList extends Component
         }
 
         $this->loadTasks();
-
     }
 
     public function edit($taskId)
