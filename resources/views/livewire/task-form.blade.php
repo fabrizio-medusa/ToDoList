@@ -17,15 +17,20 @@
                                 <input type="text" id="name" class="form-control" wire:model.live="taskName" placeholder="Max 100 caratteri">
                                 @error('taskName') <span class="text-danger small "> {{ $message }} </span> @enderror
                             </div>
-                             <div class="col-12">
-                                <label for="photo">Immagine</label>
-                                <input type="file" id="photo" class="form-control" wire:model="photo">
-                                @error('photo') <span class="text-danger small "> {{ $message }} </span> @enderror
-                                @if($photo)
-                                    <img src="{{$photo->temporaryUrl()}}" class="img-fluid mt-2">
+                            <div class="col-12">
+                                @if(Auth::user()->role === 'superuser')
+                                    <!-- Visualizza la select box per selezionare l'utente -->
+                                    <label for="assigned_user">Assegna a utente:</label>
+                                    <select id="assigned_user" class="form-control" wire:model="assignedUser">
+                                        <option>Scegli qui</option>
+                                        @foreach($users as $user)
+                                            @if($user->role === 'user')
+                                                <option value="{{$user->id}}">{{$user->name}}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
                                 @endif
-
-                             </div>
+                            </div>                            
                             <div class="col-12">
                                 <label for="priority">Priorità</label>
                                 <select id="priority" class="form-control" wire:model="taskPriority">

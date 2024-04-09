@@ -19,8 +19,13 @@ class TaskList extends Component
     #[On('task-created')]
     public function loadTasks()
     {
-        $user = Auth::user();
-        $this->tasks = Task::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
+        if (Auth::user()->role === 'user') {
+            $this->tasks = Task::where('user_id', Auth::id())->get();
+        } elseif (Auth::user()->role === 'superuser') {
+            $this->tasks = Task::whereHas('user', function ($query) {
+                $query->where('role', 'user')->where('assigned_by', Auth::id());
+            })->get();
+        }
     }
 
     public function isCompleted($taskId)
@@ -51,6 +56,20 @@ class TaskList extends Component
 
     public function render()
     {
-        return view('livewire.task-list');
+    $tasks = [];
+
+    if (Auth::user()->role === 'superuser') {
+        // Se l'utente è un superuser, mostra tutti i task
+        $tasks = Task::all();
+    } else {
+        // Altrimenti, mostra i task dell'utente corrente e quelli assegnati da un superuser
+        $tasks = Task::where('user_id', Auth::id())
+                    ->orWhereHas('assignedBy', function ($query) {
+                        $query->where('role', 'superuser');
+                    })
+                    ->get();
     }
+
+    return view('livewire.task-list', ['tasks' => $tasks]);
+}
 }
