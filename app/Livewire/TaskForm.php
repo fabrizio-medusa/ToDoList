@@ -7,6 +7,7 @@ use App\Models\Task;
 use Livewire\Attributes\Validate;
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Auth;
 
 class TaskForm extends Component
 {
@@ -39,28 +40,24 @@ class TaskForm extends Component
         ];
     }
 
-    public function store ()
+    public function store()
     { 
-
         $this->validate();
 
-        if($this->taskId) {
-
+        if ($this->taskId) {
             $task = Task::find($this->taskId);
 
-            $task->update ([
-
+            $task->update([
                 'name' => $this->taskName,
-                'priority' => $this->taskPriority, 
-
+                'priority' => $this->taskPriority,
             ]);
+
             session()->flash('success', 'Task modificato correttamente.');
-
         } else {
-
             Task::create([
                 'name' => $this->taskName,
                 'priority' => $this->taskPriority,
+                'user_id' => Auth::id(), // Utilizzo corretto di Auth::id() per ottenere l'ID dell'utente autenticato
             ]);
 
             if ($this->photo) {
@@ -70,19 +67,15 @@ class TaskForm extends Component
             session()->flash('success', 'Task creato correttamente.');
 
             $this->resetForm();
-
         }
   
         $this->dispatch('task-created');
-
     }
 
     public function resetForm()
     {
         $this->taskId = null;
-
         $this->taskName = '';
-
         $this->taskPriority = 'bassa';
     }
 
@@ -92,11 +85,8 @@ class TaskForm extends Component
         $task = Task::find($taskId);
 
         $this->taskId = $task->id;
-
         $this->taskName = $task->name;
-
         $this->taskPriority = $task->priority;
-
     }
 
     public function render()

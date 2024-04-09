@@ -9,16 +9,7 @@ class LogicBase extends Controller
 {
     public function home ()
     {
-    $title = 'Medusa Blog';
-    return view('auth.login', compact('title'));
+    return view('auth.login');
     }
-
-    public function about_us ()
-    {
-    $title = 'Chi Sono';
-    $description = 'Ciao sono Fabrizio Medusa e sono un Full Stack Developer';
-    return view('chi-sono',['title' => $title, 'descr' => $description]);
-    }
-
 
 }

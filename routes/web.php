@@ -26,22 +26,15 @@ Route::get('/contatti', [ContactController::class, 'form'])->name('contacts.form
 Route::post('/contatti/send', [ContactController::class, 'send'])->name('contacts.send');
 
 Route::get('/counter', Counter::class);
+
 Route::get('/users', function () {
-    
     return view('users');
-
 });
-
-
 
 Route::middleware('auth')->group(function() {
-
-    Route::get('/account', [AccountController::class, 'index'])->name('account');
-
     Route::get('/todo', function () {
-
         return view('todo');
     });
-
 });
+
 
