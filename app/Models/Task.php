@@ -22,5 +22,10 @@ public function user()
     return $this->belongsTo(User::class, 'assigned_by');
     }
 
-
+    public function assignedTo()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
 }
+
+

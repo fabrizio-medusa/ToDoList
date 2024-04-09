@@ -61,6 +61,7 @@ class TaskForm extends Component
                 'name' => $this->taskName,
                 'priority' => $this->taskPriority,
                 'user_id' => Auth::id(),
+                'assigned_to' => Auth::id(),
             ];
 
             // Se l'utente è un superuser e ha assegnato un utente user, popola le colonne assigned_to e assigned_by

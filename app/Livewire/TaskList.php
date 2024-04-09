@@ -20,14 +20,24 @@ class TaskList extends Component
     public function loadTasks()
     {
         if (Auth::user()->role === 'user') {
-            $this->tasks = Task::where('user_id', Auth::id())->get();
+            // Carica i task dell'utente corrente, quelli assegnati ad esso dai superuser
+            // e quelli autoassegnati dall'utente corrente
+            $this->tasks = Task::where('user_id', Auth::id())
+            ->orWhere('assigned_to', Auth::id()) // Task autoassegnati
+            ->orWhereHas('assignedBy', function ($query) {
+                $query->where('role', 'superuser');
+            })
+            ->orderByDesc('created_at')
+            ->get();
         } elseif (Auth::user()->role === 'superuser') {
-            $this->tasks = Task::whereHas('user', function ($query) {
-                $query->where('role', 'user')->where('assigned_by', Auth::id());
-            })->get();
+            // Carica i task assegnati dal superuser corrente agli utenti
+            $this->tasks = Task::where('assigned_by', Auth::id())
+                               ->whereNotNull('assigned_to')
+                               ->orderByDesc('created_at')
+                               ->get();
         }
     }
-
+    
     public function isCompleted($taskId)
     {
         $task = Task::find($taskId);
@@ -59,20 +69,21 @@ class TaskList extends Component
     $tasks = [];
 
     if (Auth::user()->role === 'superuser') {
-        // Se l'utente è un superuser, mostra tutti i task assegnati agli utenti
-        $tasks = Task::whereNotNull('assigned_to')->get();
+        // Query per gli utenti superuser
+        $tasks = Task::where('assigned_by', Auth::id())
+                     ->whereNotNull('assigned_to')
+                     ->get();
     } else {
-        // Altrimenti, mostra i task dell'utente corrente e quelli assegnati da un superuser
-        $tasks = Task::where(function ($query) {
-                $query->where('user_id', Auth::id())
-                      ->orWhere('assigned_to', Auth::id());
-            })
-            ->orWhereHas('assignedBy', function ($query) {
-                $query->where('role', 'superuser');
-            })
-            ->get();
+        // Query per gli utenti user
+        $tasks = Task::where('user_id', Auth::id())
+                     ->orWhere('assigned_to', Auth::id())
+                     ->orWhereHas('assignedBy', function ($query) {
+                         $query->where('role', 'superuser');
+                     })
+                     ->get();
     }
 
     return view('livewire.task-list', ['tasks' => $tasks]);
 }
+
 }
