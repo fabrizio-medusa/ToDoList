@@ -57,7 +57,7 @@ class TaskForm extends Component
             Task::create([
                 'name' => $this->taskName,
                 'priority' => $this->taskPriority,
-                'user_id' => Auth::id(), // Utilizzo corretto di Auth::id() per ottenere l'ID dell'utente autenticato
+                'user_id' => Auth::id(),
             ]);
 
             if ($this->photo) {
