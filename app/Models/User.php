@@ -24,6 +24,24 @@ class User extends Authenticatable
         'role',
     ];
 
+    // Definisci la relazione uno-a-molti con i task
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    // Metodo per ottenere i task assegnati all'utente
+    public function assignedTasks()
+    {
+        return $this->hasMany(Task::class, 'assigned_to');
+    }
+
+    // Metodo per ottenere i task assegnati dall'utente
+    public function assignedByTasks()
+    {
+        return $this->hasMany(Task::class, 'assigned_by');
+    }
+
     public const ROLE_ADMIN = 'admin';
     public const ROLE_SUPERUSER = 'superuser';
     public const ROLE_USER = 'user';
