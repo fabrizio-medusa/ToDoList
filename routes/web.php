@@ -1,12 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LogicBase;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\AnimeController;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\AccountController;
 use App\Livewire\Counter;
+use App\Http\Controllers\LogicBase;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnimeController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,11 +31,17 @@ Route::get('/counter', Counter::class);
 Route::get('/users', function () {
     return view('users');
 });
-
-Route::middleware('auth')->group(function() {
+    
+Route::middleware(['auth'])->group(function () {
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    });
+    
     Route::get('/todo', function () {
         return view('todo');
-    });
+    })->name('todo');
 });
+
+
 
 

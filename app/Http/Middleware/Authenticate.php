@@ -12,6 +12,13 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
+        // Controllo se l'utente è autenticato e se il suo ruolo è admin
+        if ($request->user() && $request->user()->role === 'admin') {
+            // Se l'utente è un admin, reindirizzalo alla dashboard
+            return route('admin.dashboard');
+        }
+
+        // Altrimenti, reindirizza l'utente alla pagina di login
         return $request->expectsJson() ? null : route('login');
     }
 }

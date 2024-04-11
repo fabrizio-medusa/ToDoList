@@ -1,5 +1,3 @@
-
-
 <nav class="navbar navbar-expand-lg bg-body-tertiary shadow">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">LOGO</a>
@@ -22,11 +20,13 @@
                   Ciao <strong>{{ auth()->user()->name }}</strong>!
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
+                  @if(Auth::user()->role === 'admin')
                   <li><a class="dropdown-item"
-                    href="">Gestisti Articoli</a></li>
+                    href="{{route('admin.dashboard')}}">Dashboard Amministratore</a></li>
                   <li><hr class="dropdown-divider"></li>
+                  @endif
                   <li><a class="dropdown-item"
-                    href="">Gestisti Categorie</a></li>
+                    href="{{route('todo')}}">ToDoList</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li>
                     <form action="/logout" method="POST">

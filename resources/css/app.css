@@ -1,5 +1,2 @@
 @import 'bootstrap';
-
-.colorebello {
-    color:blueviolet
-}
+@import 'style.css';
